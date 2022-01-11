@@ -6,10 +6,10 @@ void mid_process(int parent_pipe_fd)
 {
     int buf[1];
     read(parent_pipe_fd, buf, sizeof(buf));
-    int p=buf[0];//this is a prime
+    int p = buf[0];               // this is a prime
     printf("prime %d\n", buf[0]); //这里使用的1文件描述符1仍然是标准输出
     int n = read(parent_pipe_fd, buf, sizeof(buf));
-    if (n && buf[0] % p != 0)//there is new possible prime from parent process
+    if (n && buf[0] % p != 0) // there is new possible prime from parent process
     {
         int pipe_mid_fd[2];
         pipe(pipe_mid_fd);
@@ -24,9 +24,12 @@ void mid_process(int parent_pipe_fd)
         {
             close(1);
             close(pipe_mid_fd[0]);
-            while (n && buf[0] % p!=0)
+            while (n)
             {
-                write(pipe_mid_fd[1], buf, sizeof(buf));
+                if (buf[0] % p != 0)
+                {
+                    write(pipe_mid_fd[1], buf, sizeof(buf));
+                }
                 n = read(parent_pipe_fd, buf, sizeof(buf));
             }
             close(pipe_mid_fd[1]);
