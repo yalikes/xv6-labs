@@ -25,24 +25,6 @@ int rb_match(char *s, int s_len, char *t, int t_len)
     return -1;
 }
 
-char *fmtname(char *path)
-{
-    static char buf[DIRSIZ + 1];
-    char *p;
-
-    // Find first character after last slash.
-    for (p = path + strlen(path); p >= path && *p != '/'; p--)
-        ;
-    p++;
-
-    // Return blank-padded name.
-    if (strlen(p) >= DIRSIZ)
-        return p;
-    memmove(buf, p, strlen(p));
-    memset(buf + strlen(p), ' ', DIRSIZ - strlen(p));
-    return buf;
-}
-
 void find(char *path, char *name)
 {
     char buf[512], *p;
@@ -60,7 +42,7 @@ void find(char *path, char *name)
 
     if (fstat(fd, &st) < 0)
     {
-        fprintf(2, "ls: cannot stat %s\n", path);
+        fprintf(2, "find: cannot stat %s\n", path);
         close(fd);
         return;
     }
@@ -112,6 +94,7 @@ void find(char *path, char *name)
         }
         break;
     }
+    close(fd);//this is important, because xv6 only has limited file descriptor aviliable
 }
 
 int main(int argc, char *argv[])
