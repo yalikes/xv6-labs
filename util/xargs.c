@@ -2,7 +2,7 @@
 #include "kernel/param.h"
 #include "kernel/stat.h"
 #include "user/user.h"
-void run_cmd_helper(char *argv_exec[], char *argv_buf, char cmd, int initial_argv_num, int n_arg)
+void run_cmd_helper(char *argv_exec[], char argv_buf[][32], char *cmd, int initial_argv_num, int n_arg)
 {
     for (int i = 0; i < n_arg; i++)
     {
@@ -22,16 +22,14 @@ void run_cmd_helper(char *argv_exec[], char *argv_buf, char cmd, int initial_arg
 
 int main(int argc, char *argv[])
 {
-    char cmd[128];
+    char cmd[32];
     int initial_argv_num = argc - 1;
 
-    char argv_buf[128][MAXARG];
+    char argv_buf[MAXARG][32];
     char *argv_exec[MAXARG];
     char buf[1];
     int n_arg = 0, n_char = 0;
-
     strcpy(cmd, argv[1]);
-
     for (int i = 1; i < argc; i++)
     {
         argv_exec[i - 1] = argv[i];
@@ -41,6 +39,7 @@ int main(int argc, char *argv[])
     {
         if (buf[0] == '\n')
         {
+            argv_buf[n_arg][n_char] = 0;
             if (n_char)
             {
                 n_arg += 1;
